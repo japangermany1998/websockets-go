@@ -12,7 +12,7 @@ import (
 
 func runClient(room, full_name, colors string) {
 	ctx := context.Background()
-	client, err := neffos.Dial(ctx,gorilla.DefaultDialer,"ws://localhost:8080/websocket_endpoint", neffos.Namespaces{
+	client, err := neffos.Dial(ctx, gorilla.DefaultDialer, "ws://localhost:8080/websocket_endpoint", neffos.Namespaces{
 		"v1": neffos.Events{
 			"chat": clientReceive,
 		},
@@ -29,8 +29,9 @@ func runClient(room, full_name, colors string) {
 	if err != nil {
 		panic(err)
 	}
-	out:
-	for{
+	fmt.Println("Hello, I'm " + color.Colorize(colors, full_name))
+out:
+	for {
 		select {
 		case <-client.NotifyClose:
 			log.Println(color.Colorize(color.Red, "Websocket connection closed"))
@@ -40,7 +41,7 @@ func runClient(room, full_name, colors string) {
 			fmt.Print("Enter message: ")
 			_, _ = fmt.Scan(&msg)
 			cursor.ClearLinesUp(1)
-			r.Emit("chat", []byte(color.Colorize(colors, full_name + ": ") + msg ))
+			r.Emit("chat", []byte(color.Colorize(colors, full_name+": ")+msg))
 			break
 		}
 	}

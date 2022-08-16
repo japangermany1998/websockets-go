@@ -10,20 +10,18 @@ import (
 	"os"
 )
 
-
 var ws = neffos.New(websocket.DefaultGorillaUpgrader, neffos.Namespaces{
 	"v1": neffos.Events{
-	"chat": serverReceived,
+		"chat": serverReceived,
 	},
 })
 
 func serverReceived(c *neffos.NSConn, msg neffos.Message) error {
-	log.Println(string(msg.Body))
 	c.Conn.Server().Broadcast(nil, neffos.Message{
 		Namespace: msg.Namespace,
-		Room: msg.Room,
-		Event: msg.Event,
-		Body: msg.Body,
+		Room:      msg.Room,
+		Event:     msg.Event,
+		Body:      msg.Body,
 	})
 	return nil
 }
@@ -49,6 +47,10 @@ func main() {
 		runClient("room1", "client1", color.Yellow)
 	case "client2":
 		runClient("room1", "client2", color.Blue)
+	case "client3":
+		runClient("room2", "client3", color.Green)
+	case "client4":
+		runClient("room2", "client4", color.Cyan)
 	default:
 		log.Fatalf("unexpected argument, expected 'server' or 'client' but got '%s'", side)
 	}
@@ -62,4 +64,3 @@ func runServer() {
 	log.Println("Serving websockets on http://localhost:8080/websocket_endpoint")
 	log.Fatal(app.Listen(":8080"))
 }
-
